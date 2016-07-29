@@ -1,7 +1,8 @@
 ---
 title: "PA1_template.Rmd"
 output: 
-  html_document
+  html_document:
+   toc: true
 ---
 
 Loading and preprocessing the data
