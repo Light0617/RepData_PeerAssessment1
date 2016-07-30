@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>PA1_template.Rmd</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<link href="data:text/css;charset=utf-8,pre%20%2Eoperator%2C%0Apre%20%2Eparen%20%7B%0Acolor%3A%20rgb%28104%2C%20118%2C%20135%29%0A%7D%0Apre%20%2Eliteral%20%7B%0Acolor%3A%20%23990073%0A%7D%0Apre%20%2Enumber%20%7B%0Acolor%3A%20%23099%3B%0A%7D%0Apre%20%2Ecomment%20%7B%0Acolor%3A%20%23998%3B%0Afont%2Dstyle%3A%20italic%0A%7D%0Apre%20%2Ekeyword%20%7B%0Acolor%3A%20%23900%3B%0Afont%2Dweight%3A%20bold%0A%7D%0Apre%20%2Eidentifier%20%7B%0Acolor%3A%20rgb%280%2C%200%2C%200%29%3B%0A%7D%0Apre%20%2Estring%20%7B%0Acolor%3A%20%23d14%3B%0A%7D%0A" rel="stylesheet" type="text/css" />
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">PA1_template.Rmd</h1>
+
+</div>
+
+
+<p>Loading and preprocessing the data</p>
+<div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
+<h2>What is mean total number of steps taken per day?</h2>
+<p>1.Calculate the total number of steps taken per day</p>
+<pre class="r"><code>step_day&lt;-aggregate(steps~date,data=data,sum,na.rm=TRUE)</code></pre>
+<p>2.Make a histogram of the total number of steps taken each day</p>
+<pre class="r"><code>hist(step_day$steps)</code></pre>
+<p>3.the mean and median of the total number of steps taken per day</p>
+<pre class="r"><code>mean(step_day$steps)</code></pre>
+<pre><code>## [1] 10766.19</code></pre>
+<pre class="r"><code>median(step_day$steps)</code></pre>
+<pre><code>## [1] 10765</code></pre>
+<blockquote>
+<p>the mean of the total number of steps taken per day is <strong>1.076618910^{4}</strong></p>
+</blockquote>
+<blockquote>
+<p>the median of the total number of steps taken per day is <strong>10765</strong></p>
+</blockquote>
+</div>
+<div id="what-is-the-average-daily-activity-pattern" class="section level2">
+<h2>What is the average daily activity pattern?</h2>
+<p>1.Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</p>
+<pre class="r"><code>step_interval&lt;-aggregate(steps~interval,data=data,mean,na.rm=TRUE)
+
+plot(step_interval$interval,step_interval$steps,type='l')</code></pre>
+<p>2.Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</p>
+<pre class="r"><code>step_interval[which.max(step_interval$steps),]$interval</code></pre>
+<pre><code>## [1] 835</code></pre>
+<p>the maximum number of steps is __835__th</p>
+</div>
+<div id="imputing-missing-values" class="section level2">
+<h2>Imputing missing values</h2>
+<p>1.Calculate and report the total number of missing values in the dataset</p>
+<pre class="r"><code>sum(is.na(data$steps))</code></pre>
+<pre><code>## [1] 2304</code></pre>
+<p>the total number of missing values is <strong>2304</strong></p>
+<p>2.Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</p>
+<pre class="r"><code>names(step_interval)&lt;-c('interval','avg_step')
+data1&lt;-merge(data,step_interval,by='interval')</code></pre>
+<p>3.Create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
+<pre class="r"><code>data1[is.na(data1$steps),]['steps']&lt;-data1[is.na(data1$steps),]['avg_step']</code></pre>
+<p>4.1 Make a histogram of the total number of steps taken each day</p>
+<pre class="r"><code>step_day1&lt;-aggregate(steps~date,data=data1,sum,na.rm=TRUE)
+hist(step_day1$steps)</code></pre>
+<p>4.2 Do these values differ from the estimates from the first part of the assignment?</p>
+<p><strong>YES!</strong></p>
+<p>4.3 What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
+<p><strong>it will be more concentrate on the center of data</strong></p>
+</div>
+<div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
+<h2>5.Are there differences in activity patterns between weekdays and weekends?</h2>
+<p>1.Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</p>
+<pre class="r"><code>data1$weekday=ifelse(as.POSIXlt(as.Date(data1$date))$wday%%6==0,'weekend','weekday')
+data1$day=factor(data1$weekday,levels=c(&quot;weekday&quot;,&quot;weekend&quot;))</code></pre>
+<p>2.Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</p>
+<pre class="r"><code>step_interval1&lt;-aggregate(steps~interval+weekday,data=data1,mean,na.rm=TRUE)
+plot(step_interval1$interval,step_interval1$steps,type='l')</code></pre>
+<p>See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
